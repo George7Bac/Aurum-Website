@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aurum — Music Player</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="register-screen" class="screen active auth-bg">
+  <div class="auth-container">
+    <h2 class="auth-title">Create Account</h2>
+    <p class="auth-sub">Start your musical journey</p>
+    <input type="text" id="reg-name" class="modal-input" placeholder="Full Name">
+    <input type="email" id="reg-email" class="modal-input" placeholder="Email Address">
+    <input type="number" id="reg-age" class="modal-input" placeholder="Age">
+    
+    <div class="radio-group">
+      <label><input type="radio" name="reg-gender" value="Male"> Male</label>
+      <label><input type="radio" name="reg-gender" value="Female"> Female</label>
+    </div>
+    
+    <input type="date" id="reg-dob" class="modal-input" title="Date of Birth">
+    <input type="password" id="reg-pass" class="modal-input" placeholder="Password">
+    
+    <button class="auth-btn" onclick="handleRegister()">Sign Up</button>
+    <p class="auth-link">Already have an account? <span onclick="switchAuth('login-screen')">Log in here</span></p>
+  </div>
+</div>
+
+<div id="login-screen" class="screen auth-bg">
+  <div class="auth-container">
+    <h2 class="auth-title">Welcome Back</h2>
+    <p class="auth-sub">Log in to continue listening</p>
+    <input type="email" id="log-email" class="modal-input" placeholder="Email Address">
+    <input type="password" id="log-pass" class="modal-input" placeholder="Password">
+    
+    <button class="auth-btn" onclick="handleLogin()">Log In</button>
+    <p class="auth-link">Don't have an account? <span onclick="switchAuth('register-screen')">Sign up here</span></p>
+  </div>
+</div>
+
+<div id="profile-screen" class="screen">
+  <div class="library-topbar">
+    <div class="liked-songs-header-left">
+      <button class="back-page-btn" onclick="closeProfile()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </button>
+      <div class="library-title">Profile Settings</div>
+    </div>
+  </div>
+  <div class="scroll-body" style="padding: 20px;">
+    <div style="text-align:center; margin-bottom: 24px;">
+      <div class="avatar" id="profile-avatar-large" style="width:80px; height:80px; font-size:32px; margin:0 auto; cursor:default;">US</div>
+    </div>
+    <input type="text" id="prof-name" class="modal-input" placeholder="Full Name">
+    <input type="email" id="prof-email" class="modal-input" placeholder="Email Address" disabled style="opacity:0.5; cursor:not-allowed;" title="Email cannot be changed">
+    <input type="number" id="prof-age" class="modal-input" placeholder="Age">
+    
+    <div class="radio-group">
+      <label><input type="radio" name="prof-gender" value="Male"> Male</label>
+      <label><input type="radio" name="prof-gender" value="Female"> Female</label>
+    </div>
+    
+    <input type="date" id="prof-dob" class="modal-input">
+    <input type="password" id="prof-pass" class="modal-input" placeholder="New Password (leave empty to keep current)">
+    
+    <button class="auth-btn" onclick="saveProfile()">Save Changes</button>
+    <button class="auth-btn" onclick="handleLogout()" style="margin-top:12px; background:transparent; border:1px solid #ff4d4d; color:#ff4d4d;">Log Out Account</button>
+  </div>
+</div>
+
+<div id="home-screen" class="screen">
+  <div class="topbar">
+    <div>
+      <div class="topbar-logo">Aurum</div>
+      <div class="topbar-subtitle">Your Sound, Elevated</div>
+    </div>
+    <div class="topbar-right">
+      <button class="icon-btn" onclick="showToast('🔔 No new notifications')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      </button>
+      <div class="avatar" id="home-avatar" onclick="openProfile()">US</div>
+    </div>
+  </div>
+
+  <div class="scroll-body">
+    <div class="greeting-section">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
+        <div class="greeting-text" id="greeting-text">Good evening 🌙</div>
+      </div>
+      <div class="greeting-sub">What are you in the mood for?</div>
+    </div>
+
+    <div class="quick-picks">
+      <div class="quick-card" onclick="openLikedSongsPage()">
+        <div class="quick-art" style="background:linear-gradient(135deg,#c9a227,#0a1628)">💛</div>
+        <div class="quick-label">Liked Songs</div>
+      </div>
+      <div class="quick-card" onclick="playFromCard('Jazz at Midnight','🎷','Blue Note Sessions')">
+        <div class="quick-art" style="background:linear-gradient(135deg,#1a3060,#0a1628)">🎷</div>
+        <div class="quick-label">Jazz at Midnight</div>
+      </div>
+      <div class="quick-card" onclick="playFromCard('Focus Mode','🎹','Ambient Studies')">
+        <div class="quick-art" style="background:linear-gradient(135deg,#1e3a1e,#0a1628)">🎹</div>
+        <div class="quick-label">Focus Mode</div>
+      </div>
+      <div class="quick-card" onclick="playFromCard('Golden Hits','⭐','Classics')">
+        <div class="quick-art" style="background:linear-gradient(135deg,#3a2a00,#c9a227)">⭐</div>
+        <div class="quick-label">Golden Hits</div>
+      </div>
+      <div class="quick-card" onclick="playFromCard('Chill Vibes','🌊','Sunset Mood')">
+        <div class="quick-art" style="background:linear-gradient(135deg,#1a3a4e,#0a1628)">🌊</div>
+        <div class="quick-label">Chill Vibes</div>
+      </div>
+      <div class="quick-card" onclick="playFromCard('Workout Mix','🔥','Energy Boost')">
+        <div class="quick-art" style="background:linear-gradient(135deg,#4e1a1a,#0a1628)">🔥</div>
+        <div class="quick-label">Workout Mix</div>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <div>
+        <div class="section-title">Featured Today</div>
+        <div style="margin-top:4px;"><span class="badge">✦ Curated for you</span></div>
+      </div>
+    </div>
+    <div class="h-scroll">
+      <div class="playlist-card" onclick="playFromCard('After Hours','🌙','The Weeknd')">
+        <div class="playlist-art g1">🌙</div>
+        <div class="playlist-name">After Hours</div>
+        <div class="playlist-meta">The Weeknd · 2020</div>
+      </div>
+      <div class="playlist-card" onclick="playFromCard('Kind of Blue','🎷','Miles Davis')">
+        <div class="playlist-art g4">🎷</div>
+        <div class="playlist-name">Kind of Blue</div>
+        <div class="playlist-meta">Miles Davis · 1959</div>
+      </div>
+      <div class="playlist-card" onclick="playFromCard('Midnight Rain','🌧️','Taylor Swift')">
+        <div class="playlist-art g6">🌧️</div>
+        <div class="playlist-name">Midnight Rain</div>
+        <div class="playlist-meta">Taylor Swift · 2022</div>
+      </div>
+      <div class="playlist-card" onclick="playFromCard('Folklore','🍂','Taylor Swift')">
+        <div class="playlist-art g2">🍂</div>
+        <div class="playlist-name">Folklore</div>
+        <div class="playlist-meta">Taylor Swift · 2020</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-header">
+      <div class="section-title">Recommended Songs</div>
+      <div class="see-all" onclick="showToast('📋 Full list loading...')">See All</div>
+    </div>
+    <div class="song-list" id="recommended-songs">
+      </div>
+
+    <div style="height:40px;"></div>
+  </div>
+</div>
+
+<div id="search-screen" class="screen">
+  <div class="search-topbar">
+    <div class="search-title">Search</div>
+    <div class="search-input-wrap">
+      <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" class="search-input" placeholder="Artists, songs, playlists..." id="search-input" oninput="handleSearch(this.value)">
+    </div>
+  </div>
+  <div class="scroll-body" id="search-body">
+    <div id="search-results" style="display:none; padding: 0 20px;"></div>
+    <div id="browse-section">
+      <div class="section-header" style="padding-top:4px;">
+        <div class="section-title">Browse Categories</div>
+      </div>
+      <div class="browse-grid">
+        <div class="browse-item bc1" onclick="showToast('🎵 Pop playlist loading...')"><div class="browse-item-emoji">🎤</div><div class="browse-item-label">Pop</div></div>
+        <div class="browse-item bc2" onclick="showToast('🎷 Jazz playlist loading...')"><div class="browse-item-emoji">🎷</div><div class="browse-item-label">Jazz</div></div>
+        <div class="browse-item bc3" onclick="showToast('🔥 Hip-Hop playlist loading...')"><div class="browse-item-emoji">🎧</div><div class="browse-item-label">Hip-Hop</div></div>
+        <div class="browse-item bc4" onclick="showToast('🌊 Lo-fi playlist loading...')"><div class="browse-item-emoji">☕</div><div class="browse-item-label">Lo-fi</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="library-screen" class="screen">
+  <div class="library-topbar">
+    <div class="library-title">Your Library</div>
+    <button class="icon-btn" onclick="openCreatePlaylistOnly()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    </button>
+  </div>
+  <div class="filter-chips">
+    <div class="chip active" onclick="filterLib(this,'all')">All</div>
+    <div class="chip" onclick="filterLib(this,'playlists')">Playlists</div>
+    <div class="chip" onclick="filterLib(this,'albums')">Albums</div>
+    <div class="chip" onclick="filterLib(this,'artists')">Artists</div>
+  </div>
+  <div class="scroll-body" id="library-list">
+    </div>
+</div>
+
+<div id="reputation-screen" class="screen">
+  <div class="topbar">
+    <div>
+      <div class="topbar-logo">Reputation</div>
+      <div class="topbar-subtitle">Your Musical Journey</div>
+    </div>
+  </div>
+  <div class="scroll-body">
+    <div class="rep-profile">
+      <div class="rep-avatar" id="rep-avatar">US</div>
+      <div class="rep-info">
+        <div class="rep-name" id="rep-name">User</div>
+        <div class="rep-points" id="rep-points">💎 4,250 Rep Points</div>
+      </div>
+    </div>
+    <div class="section-header"><div class="section-title">Community Badges</div></div>
+    <div class="rep-grid">
+      <div class="rep-card">
+        <div class="rep-icon discoverer-bg">🔭</div>
+        <div class="rep-card-title">Discoverer</div>
+        <div class="rep-card-desc">Sering menemukan lagu baru sebelum viral.</div>
+        <div class="rep-progress-wrap">
+          <div class="rep-progress-bar"><div class="rep-progress-fill" style="width: 75%;"></div></div>
+          <div class="rep-progress-text">Level 3</div>
+        </div>
+      </div>
+      <div class="rep-card">
+        <div class="rep-icon curator-bg">🖼️</div>
+        <div class="rep-card-title">Curator</div>
+        <div class="rep-card-desc">Playlist buatanmu banyak disimpan orang.</div>
+        <div class="rep-progress-wrap">
+          <div class="rep-progress-bar"><div class="rep-progress-fill" style="width: 90%;"></div></div>
+          <div class="rep-progress-text">Level 5</div>
+        </div>
+      </div>
+      <div class="rep-card">
+        <div class="rep-icon critic-bg">✍️</div>
+        <div class="rep-card-title">Critic</div>
+        <div class="rep-card-desc">Ulasan lagu yang kamu buat berkualitas.</div>
+        <div class="rep-progress-wrap">
+          <div class="rep-progress-bar"><div class="rep-progress-fill" style="width: 45%;"></div></div>
+          <div class="rep-progress-text">Level 2</div>
+        </div>
+      </div>
+      <div class="rep-card">
+        <div class="rep-icon historian-bg">🏛️</div>
+        <div class="rep-card-title">Historian</div>
+        <div class="rep-card-desc">Pengetahuan musik yang mendalam.</div>
+        <div class="rep-progress-wrap">
+          <div class="rep-progress-bar"><div class="rep-progress-fill" style="width: 25%;"></div></div>
+          <div class="rep-progress-text">Level 1</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="liked-songs-screen" class="screen">
+  <div class="library-topbar">
+    <div class="liked-songs-header-left">
+      <button class="back-page-btn" onclick="closePageToLibrary('liked-songs-screen')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
+      <div class="library-title">Liked Songs</div>
+    </div>
+  </div>
+  <div class="scroll-body song-list" id="liked-songs-list"></div>
+</div>
+
+<div id="custom-playlist-screen" class="screen">
+  <div class="library-topbar">
+    <div class="liked-songs-header-left">
+      <button class="back-page-btn" onclick="closePageToLibrary('custom-playlist-screen')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
+      <div class="library-title" id="custom-playlist-title">My Playlist</div>
+    </div>
+  </div>
+  <div class="scroll-body song-list" id="custom-playlist-list"></div>
+</div>
+
+<div class="now-playing-bar" id="now-playing-bar" onclick="openPlayer()" style="display:none;">
+  <div class="np-progress-bar"><div class="np-progress-fill" id="np-progress" style="width:0%"></div></div>
+  <div class="np-art g1" id="np-art">🌙</div>
+  <div class="np-info">
+    <div class="np-title" id="np-title">Blinding Lights</div>
+    <div class="np-artist" id="np-artist">The Weeknd</div>
+  </div>
+  <div class="np-controls" onclick="event.stopPropagation()">
+    <button class="ctrl-btn" onclick="openPlaylistModal(currentSong)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+    <button class="ctrl-btn heart-btn" id="np-heart" onclick="toggleLike()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+    <button class="ctrl-btn play-main" id="np-play" onclick="togglePlay()"><svg id="np-play-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></button>
+  </div>
+</div>
+
+<div class="bottom-nav" id="main-bottom-nav" style="display:none;">
+  <div class="nav-item active" id="nav-home" onclick="switchTab('home')">
+    <svg class="nav-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <div class="nav-label">Home</div>
+  </div>
+  <div class="nav-item" id="nav-search" onclick="switchTab('search')">
+    <svg class="nav-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <div class="nav-label">Search</div>
+  </div>
+  <div class="nav-item" id="nav-library" onclick="switchTab('library')">
+    <svg class="nav-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+    <div class="nav-label">Library</div>
+  </div>
+  <div class="nav-item" id="nav-reputation" onclick="switchTab('reputation')">
+    <svg class="nav-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+    <div class="nav-label">Reputation</div>
+  </div>
+</div>
+
+<div id="player-screen">
+  <div class="player-topbar">
+    <button class="player-back" onclick="closePlayer()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+    <div class="player-context">
+      <div class="player-ctx-label">Playing from</div>
+      <div class="player-ctx-name" id="player-ctx-name">Recommended Songs</div>
+    </div>
+    <button class="player-menu-btn" onclick="showToast('⋯ Song options')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+  </div>
+
+  <div class="player-art-container"><div class="player-art g1" id="player-art">🌙</div></div>
+
+  <div class="player-song-info">
+    <div>
+      <div class="player-song-title" id="player-title">Blinding Lights</div>
+      <div class="player-song-artist" id="player-artist">The Weeknd</div>
+    </div>
+    <div style="display:flex; align-items:center; gap:8px;">
+      <button class="player-heart" onclick="openPlaylistModal(currentSong)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+      <button class="player-heart" id="player-heart" onclick="toggleLike()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+    </div>
+  </div>
+
+  <div class="seek-container">
+    <div class="seek-bar-wrap" onclick="seekTo(event)">
+      <div class="seek-fill" id="seek-fill"></div>
+      <div class="seek-thumb" id="seek-thumb"></div>
+    </div>
+    <div class="seek-times"><span id="time-current">0:00</span><span id="time-total">3:45</span></div>
+  </div>
+
+  <div class="main-controls">
+    <button class="main-ctrl-secondary" id="shuffle-btn" onclick="toggleShuffle()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg></button>
+    <button class="main-ctrl-skip" onclick="prevTrack()"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg></button>
+    <button class="main-ctrl-play" id="main-play-btn" onclick="togglePlay()"><svg id="main-play-icon" width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></button>
+    <button class="main-ctrl-skip" onclick="nextTrack()"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg></button>
+    <button class="main-ctrl-secondary" id="repeat-btn" onclick="toggleRepeat()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></button>
+  </div>
+
+  <div class="volume-row">
+    <svg class="vol-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/></svg>
+    <input type="range" class="vol-slider" min="0" max="100" value="80" id="vol-slider">
+    <svg class="vol-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+  </div>
+</div>
+
+<div id="playlist-modal" class="custom-modal-overlay">
+  <div class="custom-modal-box" id="modal-content-area"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
